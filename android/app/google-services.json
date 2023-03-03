@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "744469859775",
+    "project_id": "ereyapressing",
+    "storage_bucket": "ereyapressing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744469859775:android:0057b3e5c08b2ae681e50a",
+        "android_client_info": {
+          "package_name": "com.example.ereyapressing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744469859775-m5l25agrp64c7cft1v79qugsk72a9i4c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASyll4MnST5ku87Q9qA-N6AtJNVb7txxw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744469859775-m5l25agrp64c7cft1v79qugsk72a9i4c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
