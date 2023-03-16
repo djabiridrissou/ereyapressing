@@ -15,6 +15,11 @@ dependencies:
     sdk: flutter
   firebase_auth: ^4.2.8
   intl_phone_field: ^3.1.0
+  geolocator: ^9.0.2
+  geocoding: ^2.0.5
+  location: ^4.3.0
+  fluttertoast: ^8.0.7
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +28,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+android:
+  uses-permission: 
+    - android.permission.ACCESS_COARSE_LOCATION
+    - android.permission.ACCESS_FINE_LOCATION

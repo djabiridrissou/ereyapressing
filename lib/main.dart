@@ -1,5 +1,6 @@
 import 'package:ereyapressing/firebase_options.dart';
 import 'package:ereyapressing/home.dart';
+import 'package:ereyapressing/inscription.dart';
 import 'package:ereyapressing/sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,8 @@ class MainApp extends StatelessWidget {
       home: StreamBuilder<User?>(
           stream: auth.authStateChanges(),
           builder: (context, snapshot) {
-            return snapshot.data == null ? const SignIn() : const Home();
+            return snapshot.data == null ? const Inscription() : const Home();
+            //return const Inscription();
           }),
     );
   }

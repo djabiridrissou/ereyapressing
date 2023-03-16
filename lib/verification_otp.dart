@@ -1,18 +1,99 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-import 'home.dart';
+import 'function.dart';
 
 class VerificationOtp extends StatefulWidget {
   final String verificationId;
-  const VerificationOtp({Key? key, required this.verificationId})
+  const VerificationOtp(
+      {Key? key,
+      required this.verificationId,
+      required this.numeroTelephone,
+      required this.nom,
+      required this.prenom,
+      required this.mail})
       : super(key: key);
+  final String numeroTelephone;
+  final String nom;
+  final String prenom;
+  final String mail;
 
   @override
   State<VerificationOtp> createState() => _VerificationOtpState();
 }
 
 class _VerificationOtpState extends State<VerificationOtp> {
+  String smsCode = "";
+  bool loading = false;
+  bool resend = false;
+  int count = 60;
+  final auth = FirebaseAuth.instance;
+  @override
+  void initState() {
+    super.initState();
+    decompte();
+  }
+
+  late Timer timer;
+  void decompte() {
+    timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      if (count < 1) {
+        timer.cancel();
+        count = 60;
+        resend = true;
+        if (mounted) {
+          setState(() {});
+        }
+        return;
+      }
+      count--;
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void onResendSmsCode() {
+    resend = false;
+    setState(() {});
+    authWithPhoneNumber(widget.numeroTelephone,
+        onCodeSend: (verificationId, v) {
+      loading = false;
+      resend = false;
+      decompte();
+      setState(() {});
+    }, onAutoverify: (v) async {
+      await auth.signInWithCredential(v);
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pop();
+    }, onFailed: (e) {
+      // print("Le code entré n'est pas le bon");
+    }, autoRetrieval: (v) {});
+  }
+
+  void onVerifySmsCode() async {
+    loading = true;
+    setState(() {});
+    await validateOtp(smsCode, widget.verificationId);
+    loading = true;
+    setState(() {});
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+    print("Vérification effectué avec succès");
+    User user = FirebaseAuth.instance.currentUser!;
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    await users.doc(user.uid).set({
+      'nom': widget.nom,
+      'prenom': widget.prenom,
+      'email': widget.mail,
+      'numeroTelephone': widget.numeroTelephone,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,14 +123,21 @@ class _VerificationOtpState extends State<VerificationOtp> {
               const SizedBox(
                 height: 20,
               ),
-              const Pinput(
+              Pinput(
                 length: 6,
+                onChanged: (value) {
+                  smsCode = value;
+                  //print(smsCode);
+                  setState(() {});
+                },
               ),
               Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton(
-                  onPressed: () {},
-                  child: const Text("Renvoyer le code"),
+                  onPressed: !resend ? null : onResendSmsCode,
+                  child: Text(!resend
+                      ? "00:${count.toString().padLeft(2, "0")}"
+                      : "Renvoyer le code"),
                 ),
               ),
               Column(
@@ -58,14 +146,16 @@ class _VerificationOtpState extends State<VerificationOtp> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 15)),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (c) => const Home()));
-                    },
-                    child: const Text(
-                      'Vérifier',
-                      style: TextStyle(fontSize: 20),
-                    ),
+                    onPressed:
+                        smsCode.length < 6 || loading ? null : onVerifySmsCode,
+                    child: loading
+                        ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          )
+                        : const Text(
+                            'Vérifier',
+                            style: TextStyle(fontSize: 20),
+                          ),
                   ),
                 ],
               ),
