@@ -16,19 +16,23 @@ class _SignInState extends State<SignIn> {
   String phoneNumber = '';
   void sendOtpCode() {
     loading = true;
+    setState(() {});
     final auth = FirebaseAuth.instance;
     if (phoneNumber.isNotEmpty) {
       authWithPhoneNumber(phoneNumber, onCodeSend: (verificationId, v) {
         loading = false;
         setState(() {});
-        Navigator.of(context).push(MaterialPageRoute(
+        /* Navigator.of(context).push(MaterialPageRoute(
             builder: (c) => VerificationOtp(
                   verificationId: verificationId,
-                )));
+                  phoneNumber: phoneNumber,
+                ))); */
       }, onAutoverify: (v) async {
         await auth.signInWithCredential(v);
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pop();
       }, onFailed: (e) {
-        print("Le code entré n'est pas le bon");
+        //print("Le code entré n'est pas le bon");
       }, autoRetrieval: (v) {});
     }
   }
@@ -54,7 +58,7 @@ class _SignInState extends State<SignIn> {
           IntlPhoneField(
             initialCountryCode: "TG",
             onChanged: (value) {
-              print(value.completeNumber);
+              // print(value.completeNumber);
               phoneNumber = value.completeNumber;
             },
             decoration: const InputDecoration(border: OutlineInputBorder()),
