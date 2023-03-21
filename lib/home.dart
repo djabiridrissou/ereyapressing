@@ -1,5 +1,4 @@
-import 'package:ereyapressing/function.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -7,26 +6,51 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    final nom = user.nom;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("reyaPressing"),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                await logout();
-              },
-              icon: const Icon(Icons.logout))
-        ],
+        title: const Text('Accueil'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Numéro de téléphone: ${user.phoneNumber ?? ""}"),
-          Text("Nom: $nom"),
-          Text("Uid: ${user.phoneNumber ?? ""}")
+      body: const Center(
+        child: Text('Contenu de la page d\'accueil'),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        // ignore: prefer_const_literals_to_create_immutables
+        items: [
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Commande',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.receipt),
+            label: 'Facture',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet),
+            label: 'Portefeuille',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profil',
+          ),
         ],
+        selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/commande');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/facture');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/portefeuille');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/profil');
+              break;
+          }
+        },
       ),
     );
   }
